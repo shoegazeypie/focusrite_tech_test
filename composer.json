@@ -1,0 +1,11 @@
+{
+    "name": "seriousrosie/focusrite_tech_test",
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "FocusriteTechTest\\": "src/"
+        }
+    }
+}
