@@ -35,7 +35,7 @@
       foreach (scandir($directory) as $filename) {
         if ($filename != '.' && $filename != '..') {
           $card_numbers = [];
-          $card_file = fopen("$directory/$filename", "r") or die("Unable to open file!");
+          $card_file = @fopen("$directory/$filename", "r") or die("Unable to open card file!\n");
           while (!feof($card_file)) {
             $card_line = fgets($card_file);
             $card_numbers[] = explode(' ', $card_line);
@@ -53,7 +53,7 @@
      * @return false|string[]|void The numbers called in the game.
      */
     protected function _readNumbers($file_path) {
-      $file = fopen($file_path, "r") or die("Unable to open file!");
+      $file = @fopen($file_path, "r") or die("Unable to open numbers file!\n");
       $line_numbers = fgets($file);
       $called_numbers = explode(',', $line_numbers);
       fclose($file);
@@ -84,8 +84,8 @@
         if (($first_bingo = $card->firstBingo($this->called_numbers)) !== false) {
           $first_bingos[$card->getName()] = $first_bingo;
         }
-        // Return the key of the first bingo in the list.
-        return array_search(min($first_bingos), $first_bingos);
       }
+      // Return the key of the first bingo in the list.
+      return array_search(min($first_bingos), $first_bingos);
     }
   }
