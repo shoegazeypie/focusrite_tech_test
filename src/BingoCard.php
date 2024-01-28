@@ -9,10 +9,11 @@
      * @var array Multidimensional array of card numbers.
      */
     protected $card_numbers = [];
+
     /**
-     * The max length of the card numbers (assuming a square card).
+     * @var int The max length of the card numbers (assuming a square card).
      */
-    const MAX_DIMENSION = 5;
+    protected $max_dimension;
 
     /**
      * @var string A name to identify the card.
@@ -35,6 +36,7 @@
     public function __construct(array $card_numbers, $name) {
       $this->card_numbers = $card_numbers;
       $this->name = $name;
+      $this->max_dimension = count($card_numbers);
     }
 
     /**
@@ -45,19 +47,25 @@
      * @return false|int The position in the called numbers or false if not called.
      */
     protected function _checkNumberCalled($row, $col, $called_numbers) {
-      $target = $this->card_numbers[$row][$col];
-      return array_search($target, $called_numbers);
+      if (array_key_exists($row, $this->card_numbers) and array_key_exists($col, $this->card_numbers[$row])) {
+        $target = $this->card_numbers[$row][$col];
+        return array_search($target, $called_numbers);
+      }
+      else {
+        return false;
+      }
     }
 
     /**
      * Create an array showing positions of all card numbers in the called numbers.
      * @param array $called_numbers The ordered numbers called by the bingo caller.
-     * @return mixed An array of called number positions.
+     * @return array An array of called number positions.
      */
     protected function _createIndexCard($called_numbers) {
+      $index_card = [];
       // get index of each number in called number array.
-      for ($r = 0; $r < self::MAX_DIMENSION; $r++) {
-        for ($c = 0; $c < self::MAX_DIMENSION; $c++) {
+      for ($r = 0; $r < $this->max_dimension; $r++) {
+        for ($c = 0; $c < $this->max_dimension; $c++) {
           $index_card[$r][$c] = self::_checkNumberCalled($r, $c, $called_numbers);
         }
       }
@@ -72,7 +80,7 @@
     public function checkBingo($called_numbers) {
       $index_card = self::_createIndexCard($called_numbers);
       // Check rows and columns assuming it's square
-      for ($index = 0; $index < self::MAX_DIMENSION; $index++) {
+      for ($index = 0; $index < $this->max_dimension; $index++) {
         $row = $index_card[$index];
         $column = array_column($index_card, $index);
         if (!in_array(false, $row, true)) {
@@ -98,7 +106,7 @@
       $index_card = self::_createIndexCard($called_numbers);
       $last_called = [];
       // Check rows and columns assuming it's square
-      for ($index = 0; $index < self::MAX_DIMENSION; $index++) {
+      for ($index = 0; $index < $this->max_dimension; $index++) {
         $row = $index_card[$index];
         $column = array_column($index_card, $index);
         if (!in_array(false, $row, true)) {
